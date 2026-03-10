@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const sessionId = Astro.url.searchParams.get('session_id');
+---
+
+<Layout title="Reservation Confirmed – Ranchos del Sol">
+  <div class="min-h-screen flex items-center justify-center px-4 py-24 bg-sand/30">
+    <div class="max-w-lg w-full text-center">
+      <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+        <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <h1 class="font-display text-3xl font-bold text-ocean-dark mb-4">Payment Successful!</h1>
+      <p class="text-gray-beach text-lg mb-6">
+        Your car rental reservation has been confirmed and payment received. A confirmation email has been sent to you with all the details.
+      </p>
+      <div class="bg-white rounded-2xl shadow-sm border border-sand p-6 mb-8 text-left">
+        <h3 class="font-semibold text-ocean-dark mb-3">What's Next?</h3>
+        <ul class="space-y-3 text-sm text-gray-beach">
+          <li class="flex items-start gap-2">
+            <span class="text-turquoise font-bold mt-0.5">✓</span>
+            Check your email for the full booking confirmation and receipt.
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-turquoise font-bold mt-0.5">✓</span>
+            Bring your valid driver's license, passport/ID, and the payment card to pickup.
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-turquoise font-bold mt-0.5">✓</span>
+            Pickup hours are 8:00 AM – 6:00 PM. Contact us for after-hours arrangements.
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-turquoise font-bold mt-0.5">✓</span>
+            Our team will be in touch to confirm final details.
+          </li>
+        </ul>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/cars" class="btn-primary px-8 py-3.5">Browse More Cars</a>
+        <a href="/contact" class="btn-secondary px-8 py-3.5">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</Layout>

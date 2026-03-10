@@ -1,0 +1,110 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../lib/auth';
+import { getAdminStats } from '../../lib/queries';
+
+if (!checkAdminAuth(Astro.request)) {
+  return Astro.redirect('/admin');
+}
+
+let stats: any = { totalCars: 0, availableCars: 0, totalReservations: 0, activeReservations: 0, revenue: 0, recentReservations: [] };
+try {
+  stats = getAdminStats();
+} catch (e) {}
+
+const statusColors: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  confirmed: 'bg-blue-100 text-blue-800',
+  active: 'bg-green-100 text-green-800',
+  completed: 'bg-gray-100 text-gray-700',
+  cancelled: 'bg-red-100 text-red-700',
+};
+---
+
+<AdminLayout title="Dashboard – Admin">
+  <div class="space-y-8">
+    <!-- Page Header -->
+    <div>
+      <h1 class="font-display text-2xl font-bold text-ocean-dark">Dashboard</h1>
+      <p class="text-gray-beach text-sm mt-1">Welcome back! Here's an overview of Ranchos del Sol.</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+      {[
+        { label: 'Total Vehicles', value: stats.totalCars, sub: `${stats.availableCars} available`, icon: '🚗', color: 'bg-ocean/10 text-ocean' },
+        { label: 'Total Reservations', value: stats.totalReservations, sub: `${stats.activeReservations} active`, icon: '📋', color: 'bg-coral/10 text-coral' },
+        { label: 'Revenue', value: `$${Number(stats.revenue).toFixed(0)}`, sub: 'All time', icon: '💰', color: 'bg-turquoise/10 text-turquoise' },
+        { label: 'Active Bookings', value: stats.activeReservations, sub: 'Pending + Confirmed', icon: '⏳', color: 'bg-sunset/10 text-sunset' },
+      ].map(stat => (
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-sand">
+          <div class={`w-10 h-10 rounded-xl ${stat.color} flex items-center justify-center text-xl mb-3`}>{stat.icon}</div>
+          <div class="font-display text-2xl font-bold text-ocean-dark">{stat.value}</div>
+          <div class="text-sm font-medium text-ocean-dark mt-0.5">{stat.label}</div>
+          <div class="text-xs text-gray-beach mt-0.5">{stat.sub}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-sand">
+      <h2 class="font-display font-bold text-ocean-dark mb-4">Quick Actions</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href="/admin/cars/new" class="btn-primary text-sm py-2.5 px-5">+ Add New Car</a>
+        <a href="/admin/reservations" class="btn-secondary text-sm py-2.5 px-5">View All Reservations</a>
+        <a href="/admin/cars" class="btn-secondary text-sm py-2.5 px-5">Manage Fleet</a>
+        <a href="/" target="_blank" class="btn-secondary text-sm py-2.5 px-5">View Website ↗</a>
+      </div>
+    </div>
+
+    <!-- Recent Reservations -->
+    <div class="bg-white rounded-2xl shadow-sm border border-sand overflow-hidden">
+      <div class="p-6 border-b border-sand flex items-center justify-between">
+        <h2 class="font-display font-bold text-ocean-dark">Recent Reservations</h2>
+        <a href="/admin/reservations" class="text-ocean text-sm font-semibold hover:underline">View All →</a>
+      </div>
+      {stats.recentReservations.length > 0 ? (
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-sand/50 text-left">
+                <th class="px-6 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">#</th>
+                <th class="px-6 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Customer</th>
+                <th class="px-6 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Vehicle</th>
+                <th class="px-6 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Dates</th>
+                <th class="px-6 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Amount</th>
+                <th class="px-6 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-sand">
+              {stats.recentReservations.map((r: any) => (
+                <tr class="hover:bg-sand/30 transition-colors">
+                  <td class="px-6 py-4 text-sm font-medium text-ocean-dark">#{r.id}</td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm font-medium text-ocean-dark">{r.customer_name}</div>
+                    <div class="text-xs text-gray-beach">{r.customer_email}</div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-beach">{r.car_make} {r.car_model}</td>
+                  <td class="px-6 py-4 text-sm text-gray-beach">
+                    {new Date(r.start_date).toLocaleDateString()} – {new Date(r.end_date).toLocaleDateString()}
+                  </td>
+                  <td class="px-6 py-4 text-sm font-semibold text-coral">${Number(r.total_amount).toFixed(2)}</td>
+                  <td class="px-6 py-4">
+                    <span class={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusColors[r.status] || 'bg-gray-100 text-gray-700'}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div class="text-center py-12 text-gray-beach">
+          <div class="text-4xl mb-3">📋</div>
+          <p>No reservations yet.</p>
+        </div>
+      )}
+    </div>
+  </div>
+</AdminLayout>

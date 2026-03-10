@@ -1,0 +1,145 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const tours = [
+  {
+    name: 'Isla Tasajera Discovery',
+    duration: '4–5 hours',
+    price: 120,
+    priceNote: 'per person (min. 4)',
+    description: 'Explore the stunning Isla Tasajera, a pristine island accessible only by boat. Snorkel in crystal-clear waters, walk on untouched beaches, and enjoy fresh seafood.',
+    highlights: ['Snorkeling gear included', 'Fresh seafood lunch', 'Guided island walk', 'Swimming in lagoons'],
+    image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
+    badge: 'Most Popular',
+  },
+  {
+    name: 'Sunset Cruise',
+    duration: '2 hours',
+    price: 75,
+    priceNote: 'per person (min. 4)',
+    description: 'Witness the breathtaking Pacific sunset from the water. Enjoy drinks, snacks, and the golden hour light over Costa del Sol.',
+    highlights: ['Drinks & snacks included', 'Professional photographer', 'Coastal views', 'Perfect for couples'],
+    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+    badge: 'Romantic',
+  },
+  {
+    name: 'Sport Fishing Adventure',
+    duration: 'Full day (6–8 hours)',
+    price: 200,
+    priceNote: 'per person (min. 2)',
+    description: 'Deep-sea fishing in the Pacific with experienced local guides. Target marlin, tuna, mahi-mahi, and more. All equipment provided.',
+    highlights: ['All fishing equipment', 'Experienced captain', 'Catch & cook option', 'Cooler with ice'],
+    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80',
+    badge: 'Adventure',
+  },
+  {
+    name: 'Private Coastal Tour',
+    duration: '3 hours',
+    price: 300,
+    priceNote: 'per boat (up to 8)',
+    description: 'A fully customizable private boat tour along the Costa del Sol coastline. Perfect for families, groups, or special occasions.',
+    highlights: ['Fully private', 'Custom route', 'Champagne available', 'Flexible schedule'],
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+    badge: 'Private',
+  },
+];
+---
+
+<Layout title="Boat Tours – Ranchos del Sol">
+  <!-- Hero -->
+  <section class="relative pt-32 pb-20 px-4 overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1920&q=70" alt="Boat tour" class="w-full h-full object-cover"/>
+      <div class="absolute inset-0 bg-gradient-to-b from-ocean-dark/70 to-ocean/50"></div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" class="w-full">
+        <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="oklch(0.98 0.01 200)"/>
+      </svg>
+    </div>
+    <div class="relative text-center text-white max-w-3xl mx-auto">
+      <p class="text-turquoise font-semibold text-sm uppercase tracking-widest mb-3">Explore the Pacific</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">Private Boat Tours</h1>
+      <p class="text-white/80 text-lg">Discover the hidden gems of Costa del Sol and Isla Tasajera from the water.</p>
+    </div>
+  </section>
+
+  <!-- Tours Grid -->
+  <section class="py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {tours.map(tour => (
+          <div class="card-beach group">
+            <div class="relative h-64 overflow-hidden">
+              <img src={tour.image} alt={tour.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"/>
+              <div class="absolute inset-0 bg-gradient-to-t from-ocean-dark/60 to-transparent"></div>
+              <div class="absolute top-4 left-4">
+                <span class="bg-coral text-white text-xs font-bold px-3 py-1.5 rounded-full">{tour.badge}</span>
+              </div>
+              <div class="absolute bottom-4 left-4 right-4">
+                <div class="flex items-center gap-2 text-white text-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                  {tour.duration}
+                </div>
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="font-display text-xl font-bold text-ocean-dark mb-2">{tour.name}</h3>
+              <p class="text-gray-beach text-sm leading-relaxed mb-4">{tour.description}</p>
+              <div class="space-y-1.5 mb-5">
+                {tour.highlights.map(h => (
+                  <div class="flex items-center gap-2 text-sm text-gray-beach">
+                    <svg class="w-4 h-4 text-turquoise shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    {h}
+                  </div>
+                ))}
+              </div>
+              <div class="flex items-center justify-between pt-4 border-t border-sand">
+                <div>
+                  <span class="text-2xl font-bold text-coral">${tour.price}</span>
+                  <span class="text-gray-beach text-xs ml-1">{tour.priceNote}</span>
+                </div>
+                <a href="/contact" class="btn-primary text-sm py-2.5 px-5">Book Tour</a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- What to Expect -->
+  <section class="py-20 px-4 bg-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="section-heading">What to Expect</h2>
+        <p class="section-subheading mx-auto text-center mt-3">All our tours are led by experienced local captains who know these waters intimately.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          { icon: '⚓', title: 'Safety First', desc: 'All boats are equipped with life jackets, first aid kits, and communication equipment. Safety briefings before every tour.' },
+          { icon: '🐟', title: 'Local Expertise', desc: 'Our captains have decades of experience navigating Costa del Sol. They know the best spots, the tides, and the wildlife.' },
+          { icon: '🌅', title: 'Unforgettable Views', desc: 'From mangrove estuaries to open Pacific swells, every tour offers scenery you simply cannot experience from land.' },
+        ].map(item => (
+          <div class="text-center p-6">
+            <div class="text-5xl mb-5">{item.icon}</div>
+            <h3 class="font-display text-xl font-bold text-ocean-dark mb-3">{item.title}</h3>
+            <p class="text-gray-beach leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Booking CTA -->
+  <section class="py-20 px-4 bg-gradient-to-br from-turquoise to-ocean text-white text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Ready to Set Sail?</h2>
+      <p class="text-white/85 text-lg mb-8">Contact us to book your tour. We operate daily, weather permitting, and can customize any experience for your group.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/contact" class="btn-outline-white text-base px-8 py-4">Book a Tour</a>
+        <a href="https://wa.me/50300000000" target="_blank" rel="noopener" class="btn-primary text-base px-8 py-4">WhatsApp Us</a>
+      </div>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,164 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../../lib/auth';
+import { getReservations } from '../../../lib/queries';
+
+if (!checkAdminAuth(Astro.request)) {
+  return Astro.redirect('/admin');
+}
+
+let reservations: any[] = [];
+try {
+  reservations = getReservations();
+} catch (e) {}
+
+const statusColors: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
+  active: 'bg-green-100 text-green-800 border-green-200',
+  completed: 'bg-gray-100 text-gray-700 border-gray-200',
+  cancelled: 'bg-red-100 text-red-700 border-red-200',
+};
+
+const paymentColors: Record<string, string> = {
+  unpaid: 'text-red-600',
+  deposit_paid: 'text-yellow-600',
+  paid: 'text-green-600',
+};
+
+const stats = {
+  total: reservations.length,
+  pending: reservations.filter(r => r.status === 'pending').length,
+  confirmed: reservations.filter(r => r.status === 'confirmed').length,
+  active: reservations.filter(r => r.status === 'active').length,
+  revenue: reservations.filter(r => r.status !== 'cancelled').reduce((s, r) => s + Number(r.total_amount), 0),
+};
+---
+
+<AdminLayout title="Reservations – Admin">
+  <div class="space-y-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="font-display text-2xl font-bold text-ocean-dark">Reservations</h1>
+        <p class="text-gray-beach text-sm mt-1">{reservations.length} total reservation{reservations.length !== 1 ? 's' : ''}</p>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      {[
+        { label: 'Total', value: stats.total, color: 'text-ocean-dark' },
+        { label: 'Pending', value: stats.pending, color: 'text-yellow-600' },
+        { label: 'Confirmed', value: stats.confirmed, color: 'text-blue-600' },
+        { label: 'Active', value: stats.active, color: 'text-green-600' },
+        { label: 'Revenue', value: `$${stats.revenue.toFixed(0)}`, color: 'text-coral' },
+      ].map(s => (
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-sand text-center">
+          <div class={`font-display text-2xl font-bold ${s.color}`}>{s.value}</div>
+          <div class="text-xs text-gray-beach mt-0.5">{s.label}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex gap-2 flex-wrap" id="filter-tabs">
+      {['all', 'pending', 'confirmed', 'active', 'completed', 'cancelled'].map(status => (
+        <button
+          data-filter={status}
+          class={`filter-tab px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all capitalize ${status === 'all' ? 'bg-ocean text-white border-ocean' : 'bg-white text-gray-beach border-sand-dark hover:border-ocean'}`}
+        >
+          {status === 'all' ? 'All' : status}
+        </button>
+      ))}
+    </div>
+
+    <!-- Reservations Table -->
+    {reservations.length > 0 ? (
+      <div class="bg-white rounded-2xl shadow-sm border border-sand overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-sand/50 text-left">
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">#</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Customer</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Vehicle</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Dates</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Amount</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Payment</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Status</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-beach uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-sand" id="reservations-tbody">
+              {reservations.map((r: any) => (
+                <tr class="hover:bg-sand/20 transition-colors reservation-row" data-status={r.status}>
+                  <td class="px-5 py-4 text-sm font-medium text-ocean-dark">#{r.id}</td>
+                  <td class="px-5 py-4">
+                    <div class="text-sm font-medium text-ocean-dark">{r.customer_name}</div>
+                    <div class="text-xs text-gray-beach">{r.customer_email}</div>
+                    {r.customer_phone && <div class="text-xs text-gray-beach">{r.customer_phone}</div>}
+                  </td>
+                  <td class="px-5 py-4 text-sm text-gray-beach">
+                    <div class="font-medium">{r.car_year} {r.car_make}</div>
+                    <div>{r.car_model}</div>
+                  </td>
+                  <td class="px-5 py-4 text-sm text-gray-beach">
+                    <div>{new Date(r.start_date).toLocaleDateString()}</div>
+                    <div class="text-xs">→ {new Date(r.end_date).toLocaleDateString()}</div>
+                  </td>
+                  <td class="px-5 py-4 text-sm font-bold text-coral">${Number(r.total_amount).toFixed(2)}</td>
+                  <td class="px-5 py-4">
+                    <span class={`text-xs font-semibold capitalize ${paymentColors[r.payment_status] || 'text-gray-beach'}`}>
+                      {r.payment_status.replace('_', ' ')}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4">
+                    <span class={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold capitalize border ${statusColors[r.status] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4">
+                    <a href={`/admin/reservations/${r.id}`} class="text-ocean hover:underline text-sm font-medium">View</a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    ) : (
+      <div class="bg-white rounded-2xl shadow-sm border border-sand text-center py-16">
+        <div class="text-5xl mb-4">📋</div>
+        <h3 class="font-display text-xl font-bold text-ocean-dark mb-2">No Reservations Yet</h3>
+        <p class="text-gray-beach">Reservations will appear here once customers book vehicles.</p>
+      </div>
+    )}
+  </div>
+</AdminLayout>
+
+<script>
+  const tabs = document.querySelectorAll('.filter-tab');
+  const rows = document.querySelectorAll('.reservation-row');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const filter = tab.getAttribute('data-filter');
+
+      tabs.forEach(t => {
+        t.classList.remove('bg-ocean', 'text-white', 'border-ocean');
+        t.classList.add('bg-white', 'text-gray-beach', 'border-sand-dark');
+      });
+      tab.classList.add('bg-ocean', 'text-white', 'border-ocean');
+      tab.classList.remove('bg-white', 'text-gray-beach', 'border-sand-dark');
+
+      rows.forEach(row => {
+        const el = row as HTMLElement;
+        if (filter === 'all' || row.getAttribute('data-status') === filter) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

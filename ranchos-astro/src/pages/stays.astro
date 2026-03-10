@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Beach Stays – Ranchos del Sol">
+
+  <!-- Airbnb SDK loaded once -->
+  <script async src="https://www.airbnb.com/embeddable/airbnb_jssdk"></script>
+
+  <!-- Hero -->
+  <section class="relative pt-32 pb-24 px-4 overflow-hidden">
+    <div class="absolute inset-0">
+      <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1920&q=70" alt="Beach house" class="w-full h-full object-cover"/>
+      <div class="absolute inset-0 bg-gradient-to-b from-ocean-dark/75 via-ocean/55 to-ocean-dark/40"></div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 70" xmlns="http://www.w3.org/2000/svg" class="w-full block">
+        <path d="M0,35 C360,70 1080,0 1440,35 L1440,70 L0,70 Z" fill="white"/>
+      </svg>
+    </div>
+    <div class="relative text-center text-white max-w-2xl mx-auto">
+      <p class="text-turquoise font-semibold text-xs uppercase tracking-[0.2em] mb-4">Beachfront Accommodations</p>
+      <h1 class="font-display text-5xl md:text-6xl font-bold mb-5 leading-tight">Beach Stays</h1>
+      <p class="text-white/80 text-lg leading-relaxed">Wake up to the sound of waves. Our properties offer the ultimate coastal experience on El Salvador's Pacific coast.</p>
+    </div>
+  </section>
+
+  <!-- Side-by-side Properties -->
+  <section class="py-20 px-4 bg-white">
+    <div class="max-w-7xl mx-auto">
+
+      <!-- Section heading -->
+      <div class="text-center mb-14">
+        <p class="text-coral font-semibold text-xs uppercase tracking-[0.2em] mb-3">Our Properties</p>
+        <h2 class="font-display text-4xl font-bold text-ocean-dark">Choose Your Perfect Escape</h2>
+        <p class="text-gray-beach mt-3 text-base max-w-xl mx-auto">Both properties sit steps from the Pacific with private beach access, pools, and stunning ocean views.</p>
+      </div>
+
+      <!-- Two-column grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+
+        <!-- Property 1 -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
+          <!-- Badge bar -->
+          <div class="bg-gradient-to-r from-coral/10 to-orange-50 px-6 py-3 flex items-center justify-between border-b border-coral/10">
+            <span class="inline-flex items-center gap-1.5 text-coral font-bold text-xs uppercase tracking-wider">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              Guest Favorite
+            </span>
+            <span class="text-ocean font-semibold text-sm">★ 4.88 <span class="text-gray-400 font-normal text-xs">(8 reviews)</span></span>
+          </div>
+
+          <!-- Airbnb embed -->
+          <div class="flex justify-center items-center bg-gray-50 px-6 pt-6">
+            <div class="airbnb-embed-frame w-full rounded-2xl overflow-hidden shadow-md"
+                 data-id="1514761523106706994"
+                 data-view="home"
+                 data-hide-price="true"
+                 style="width:100%; height:420px;">
+              <a href="https://www.airbnb.com/rooms/1514761523106706994?guests=1&adults=1&s=66&source=embed_widget">View On Airbnb</a>
+              <a href="https://www.airbnb.com/rooms/1514761523106706994?guests=1&adults=1&s=66&source=embed_widget" rel="nofollow">Home in El Salvador · ★4.88 · 4 bedrooms · 14 beds · 4 baths</a>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="px-6 pt-5 pb-6 flex flex-col gap-4 flex-1">
+            <div>
+              <h3 class="font-display text-xl font-bold text-ocean-dark leading-snug">Nice House on Private Beach near Airport</h3>
+              <p class="text-gray-beach text-sm mt-1 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-coral flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                El Salvador, Costa del Sol
+              </p>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-gray-600 border-t border-gray-100 pt-4">
+              <span class="flex items-center gap-1.5">🛏️ <strong>4</strong> beds</span>
+              <span class="flex items-center gap-1.5">🚿 <strong>4</strong> baths</span>
+              <span class="flex items-center gap-1.5">👥 Up to <strong>16</strong> guests</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              {['Private Beach', 'Pool', 'Ocean View', 'WiFi', 'AC', 'BBQ', 'Free Parking', 'Full Kitchen'].map(f => (
+                <span class="bg-turquoise/10 text-ocean-dark text-xs font-medium px-2.5 py-1 rounded-full border border-turquoise/20">✓ {f}</span>
+              ))}
+            </div>
+            <a href="https://www.airbnb.com/rooms/1514761523106706994?guests=1&adults=1&s=66&source=embed_widget"
+               target="_blank" rel="noopener"
+               class="btn-primary mt-auto text-center flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm">
+              Book on Airbnb
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Property 2 -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
+          <!-- Badge bar -->
+          <div class="bg-gradient-to-r from-ocean/10 to-teal-50 px-6 py-3 flex items-center justify-between border-b border-ocean/10">
+            <span class="inline-flex items-center gap-1.5 text-ocean font-bold text-xs uppercase tracking-wider">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              Superhost
+            </span>
+            <span class="text-ocean font-semibold text-sm">★ 4.71 <span class="text-gray-400 font-normal text-xs">(35 reviews)</span></span>
+          </div>
+
+          <!-- Airbnb embed -->
+          <div class="flex justify-center items-center bg-gray-50 px-6 pt-6">
+            <div class="airbnb-embed-frame w-full rounded-2xl overflow-hidden shadow-md"
+                 data-id="1522655574018031893"
+                 data-view="home"
+                 data-hide-price="true"
+                 style="width:100%; height:420px;">
+              <a href="https://www.airbnb.com/rooms/1522655574018031893?guests=1&adults=1&s=66&source=embed_widget">View On Airbnb</a>
+              <a href="https://www.airbnb.com/rooms/1522655574018031893?guests=1&adults=1&s=66&source=embed_widget" rel="nofollow">Home in La Paz Centro · ★4.71 · 6 bedrooms · 16 beds · 6.5 baths</a>
+            </div>
+          </div>
+
+          <!-- Details -->
+          <div class="px-6 pt-5 pb-6 flex flex-col gap-4 flex-1">
+            <div>
+              <h3 class="font-display text-xl font-bold text-ocean-dark leading-snug">Nice House Private Beach Five Bedrooms near Airport</h3>
+              <p class="text-gray-beach text-sm mt-1 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-coral flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                La Paz Centro, El Salvador
+              </p>
+            </div>
+            <div class="flex items-center gap-4 text-sm text-gray-600 border-t border-gray-100 pt-4">
+              <span class="flex items-center gap-1.5">🛏️ <strong>6</strong> beds</span>
+              <span class="flex items-center gap-1.5">🚿 <strong>6.5</strong> baths</span>
+              <span class="flex items-center gap-1.5">👥 Up to <strong>12</strong> guests</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              {['Private Beach', 'Multiple Terraces', 'Ocean View', 'WiFi', 'Full Kitchen', 'BBQ', 'Free Parking', '6.5 Baths'].map(f => (
+                <span class="bg-turquoise/10 text-ocean-dark text-xs font-medium px-2.5 py-1 rounded-full border border-turquoise/20">✓ {f}</span>
+              ))}
+            </div>
+            <a href="https://www.airbnb.com/rooms/1522655574018031893?guests=1&adults=1&s=66&source=embed_widget"
+               target="_blank" rel="noopener"
+               class="btn-primary mt-auto text-center flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm">
+              Book on Airbnb
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Amenities Banner -->
+  <section class="py-20 px-4 bg-ocean-dark text-white">
+    <div class="max-w-5xl mx-auto text-center">
+      <p class="text-turquoise font-semibold text-xs uppercase tracking-[0.2em] mb-3">Included With Every Stay</p>
+      <h2 class="font-display text-3xl font-bold mb-12">What's Always Included</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        {[
+          { icon: '🏖️', title: 'Private Beach', desc: 'Exclusive beach access for guests' },
+          { icon: '🌊', title: 'Ocean Views', desc: 'Stunning Pacific panoramas' },
+          { icon: '🏊', title: 'Pool Access', desc: 'Private or shared pool' },
+          { icon: '🚗', title: 'Car Rental Discount', desc: '10% off our fleet for guests' },
+        ].map(item => (
+          <div class="flex flex-col items-center">
+            <div class="text-5xl mb-4">{item.icon}</div>
+            <h4 class="font-display font-semibold text-base mb-1.5">{item.title}</h4>
+            <p class="text-white/60 text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 px-4 bg-sand/30 text-center">
+    <p class="text-coral font-semibold text-xs uppercase tracking-[0.2em] mb-3">Get In Touch</p>
+    <h2 class="font-display text-3xl font-bold text-ocean-dark mb-4">Need Help Choosing?</h2>
+    <p class="text-gray-beach text-base mb-8 max-w-lg mx-auto">Contact us directly and we'll help you find the perfect property for your group size and budget.</p>
+    <a href="/contact" class="btn-primary inline-flex items-center gap-2 text-base px-8 py-4 rounded-xl">
+      Contact Us
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </section>
+
+</Layout>

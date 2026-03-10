@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  /* Beach Color Palette */
+  --color-ocean: oklch(0.65 0.15 210);
+  --color-ocean-dark: oklch(0.45 0.15 215);
+  --color-ocean-light: oklch(0.82 0.10 200);
+  --color-turquoise: oklch(0.72 0.14 195);
+  --color-turquoise-light: oklch(0.88 0.08 195);
+  --color-sand: oklch(0.92 0.04 80);
+  --color-sand-dark: oklch(0.80 0.07 75);
+  --color-coral: oklch(0.68 0.18 30);
+  --color-coral-light: oklch(0.85 0.10 30);
+  --color-coral-dark: oklch(0.55 0.20 28);
+  --color-sunset: oklch(0.75 0.16 50);
+  --color-palm: oklch(0.45 0.12 145);
+  --color-white: oklch(1 0 0);
+  --color-dark: oklch(0.18 0.02 220);
+  --color-gray-beach: oklch(0.55 0.03 210);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+    overflow-y: scroll;
+  }
+  body {
+    overscroll-behavior-y: none;
+  }
+  body {
+    font-family: var(--font-body);
+    background-color: oklch(0.98 0.01 200);
+    color: oklch(0.18 0.02 220);
+  }
+  h1, h2, h3, h4 { font-family: var(--font-display); }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center gap-2 bg-coral text-white px-6 py-3 rounded-full font-semibold hover:bg-coral-dark transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 bg-white text-ocean border-2 border-ocean px-6 py-3 rounded-full font-semibold hover:bg-ocean hover:text-white transition-all duration-200;
+  }
+  .btn-outline-white {
+    @apply inline-flex items-center gap-2 bg-transparent text-white border-2 border-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-ocean transition-all duration-200;
+  }
+  .card-beach {
+    @apply bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300;
+  }
+  .section-heading {
+    @apply font-display text-3xl md:text-4xl font-bold text-ocean-dark;
+  }
+  .section-subheading {
+    @apply text-gray-beach text-lg mt-3 max-w-2xl;
+  }
+  .badge-available {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-turquoise-light text-ocean-dark;
+  }
+  .badge-unavailable {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-coral-light text-coral-dark;
+  }
+  .input-beach {
+    @apply w-full px-4 py-3 rounded-xl border border-sand-dark bg-white focus:outline-none focus:ring-2 focus:ring-turquoise focus:border-transparent transition-all;
+  }
+  .label-beach {
+    @apply block text-sm font-semibold text-ocean-dark mb-1.5;
+  }
+}

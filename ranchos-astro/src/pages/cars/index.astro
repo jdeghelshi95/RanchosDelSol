@@ -1,0 +1,165 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCarsWithPrimaryPhoto } from '../../lib/queries';
+
+let cars: any[] = [];
+try {
+  cars = getCarsWithPrimaryPhoto();
+} catch (e) {}
+
+const categories = ['all', 'sedan', 'suv', 'truck', 'van', 'convertible', 'economy'];
+---
+
+<Layout title="Car Rentals – Ranchos del Sol">
+  <!-- Hero -->
+  <section class="relative pt-32 pb-20 px-4 bg-gradient-to-br from-ocean-dark to-ocean overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=60" alt="" class="w-full h-full object-cover"/>
+    </div>
+    <div class="relative max-w-7xl mx-auto text-center text-white">
+      <p class="text-turquoise font-semibold text-sm uppercase tracking-widest mb-3">Explore the Coast</p>
+      <h1 class="font-display text-4xl md:text-5xl font-bold mb-4">Car Rentals</h1>
+      <p class="text-white/80 text-lg max-w-xl mx-auto">
+        Choose from our well-maintained fleet and explore Costa del Sol at your own pace.
+      </p>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" class="w-full">
+        <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="oklch(0.98 0.01 200)"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Filter + Grid -->
+  <section class="py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+      <!-- Category Filter -->
+      <div class="flex flex-wrap gap-3 mb-10 justify-center" id="filter-bar">
+        {categories.map(cat => (
+          <button
+            data-category={cat}
+            class={`filter-btn px-5 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 capitalize ${cat === 'all' ? 'bg-ocean text-white border-ocean' : 'bg-white text-ocean-dark border-sand-dark hover:border-ocean'}`}
+          >
+            {cat === 'all' ? 'All Vehicles' : cat}
+          </button>
+        ))}
+      </div>
+
+      {cars.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="cars-grid">
+          {cars.map((car: any) => (
+            <a href={`/cars/${car.id}`} class="card-beach group block" data-category={car.category}>
+              <div class="relative h-56 overflow-hidden bg-sand">
+                {car.primaryPhoto ? (
+                  <img src={car.primaryPhoto} alt={`${car.year} ${car.make} ${car.model}`} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy"/>
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-ocean-light to-turquoise-light">
+                    <svg class="w-24 h-24 text-ocean/20" fill="none" stroke="currentColor" stroke-width="0.8" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                  </div>
+                )}
+                <div class="absolute top-3 right-3">
+                  <span class={car.available ? 'badge-available' : 'badge-unavailable'}>
+                    {car.available ? '✓ Available' : 'Unavailable'}
+                  </span>
+                </div>
+                <div class="absolute top-3 left-3">
+                  <span class="bg-white/90 backdrop-blur-sm text-ocean-dark text-xs font-semibold px-2.5 py-1 rounded-full capitalize">{car.category}</span>
+                </div>
+                {car.photos && car.photos.length > 1 && (
+                  <div class="absolute bottom-3 right-3 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                    +{car.photos.length - 1} photos
+                  </div>
+                )}
+              </div>
+              <div class="p-6">
+                <h3 class="font-display font-bold text-xl text-ocean-dark">{car.year} {car.make} {car.model}</h3>
+                <div class="flex flex-wrap items-center gap-3 mt-3 text-sm text-gray-beach">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-ocean" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    {car.seats} seats
+                  </span>
+                  <span class="flex items-center gap-1.5 capitalize">
+                    <svg class="w-4 h-4 text-ocean" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    {car.transmission}
+                  </span>
+                  <span class="flex items-center gap-1.5 capitalize">
+                    <svg class="w-4 h-4 text-ocean" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/></svg>
+                    {car.fuel_type}
+                  </span>
+                </div>
+                {car.description && (
+                  <p class="text-gray-beach text-sm mt-3 line-clamp-2">{car.description}</p>
+                )}
+                <div class="flex items-center justify-between mt-5 pt-4 border-t border-sand">
+                  <div>
+                    <span class="text-3xl font-bold text-coral">${Number(car.daily_rate).toFixed(0)}</span>
+                    <span class="text-gray-beach text-sm"> / day</span>
+                  </div>
+                  <span class={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${car.available ? 'bg-ocean text-white group-hover:bg-ocean-dark' : 'bg-sand-dark text-gray-beach cursor-not-allowed'}`}>
+                    {car.available ? 'Book Now' : 'Unavailable'}
+                  </span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-24 bg-white rounded-2xl shadow-sm">
+          <div class="w-20 h-20 bg-sand rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-sand-dark" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-ocean-dark mb-3">Fleet Coming Soon</h3>
+          <p class="text-gray-beach mb-6">Our vehicles are being prepared. Contact us to inquire about availability.</p>
+          <a href="/contact" class="btn-primary inline-flex">Contact Us</a>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Info Banner -->
+  <section class="py-16 px-4 bg-ocean-dark text-white">
+    <div class="max-w-7xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+        {[
+          { icon: '📋', title: 'Requirements', desc: 'Valid license, passport/ID, and credit card required at pickup.' },
+          { icon: '🛡️', title: 'Insurance', desc: 'All vehicles include basic insurance coverage.' },
+          { icon: '⛽', title: 'Fuel Policy', desc: 'Full-to-full policy. Return with the same fuel level.' },
+          { icon: '📞', title: '24/7 Support', desc: 'Our team is available around the clock for any assistance.' },
+        ].map(item => (
+          <div>
+            <div class="text-4xl mb-3">{item.icon}</div>
+            <h4 class="font-display font-semibold text-lg mb-2">{item.title}</h4>
+            <p class="text-white/70 text-sm">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const carCards = document.querySelectorAll('#cars-grid [data-category]');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.getAttribute('data-category');
+
+      filterBtns.forEach(b => {
+        b.classList.remove('bg-ocean', 'text-white', 'border-ocean');
+        b.classList.add('bg-white', 'text-ocean-dark', 'border-sand-dark');
+      });
+      btn.classList.add('bg-ocean', 'text-white', 'border-ocean');
+      btn.classList.remove('bg-white', 'text-ocean-dark', 'border-sand-dark');
+
+      carCards.forEach(card => {
+        const el = card as HTMLElement;
+        if (cat === 'all' || card.getAttribute('data-category') === cat) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

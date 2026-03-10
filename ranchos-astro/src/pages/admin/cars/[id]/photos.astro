@@ -1,0 +1,43 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../../../lib/auth';
+import { getCarWithPhotos } from '../../../../lib/queries';
+import PhotoManager from '../../../../components/admin/PhotoManager';
+
+if (!checkAdminAuth(Astro.request)) {
+  return Astro.redirect('/admin');
+}
+
+const { id } = Astro.params;
+let car: any = null;
+try {
+  car = getCarWithPhotos(Number(id));
+} catch (e) {}
+
+if (!car) return Astro.redirect('/admin/cars');
+---
+
+<AdminLayout title={`Photos: ${car.year} ${car.make} ${car.model} – Admin`}>
+  <div class="max-w-4xl">
+    <div class="mb-6">
+      <a href="/admin/cars" class="text-gray-beach hover:text-ocean text-sm flex items-center gap-1 mb-4">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Fleet
+      </a>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="font-display text-2xl font-bold text-ocean-dark">Manage Photos</h1>
+          <p class="text-gray-beach text-sm mt-1">{car.year} {car.make} {car.model}</p>
+        </div>
+        <a href={`/admin/cars/${car.id}/edit`} class="btn-secondary text-sm">Edit Details</a>
+      </div>
+    </div>
+
+    <PhotoManager
+      client:load
+      carId={car.id}
+      carName={`${car.year} ${car.make} ${car.model}`}
+      initialPhotos={car.photos || []}
+    />
+  </div>
+</AdminLayout>

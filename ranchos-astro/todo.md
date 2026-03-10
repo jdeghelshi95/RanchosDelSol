@@ -1,0 +1,5 @@
+- [x] Find real Airbnb listing URLs from ranchosdelsol.com and update Stays page Book on Airbnb buttons
+- [x] Embed official Airbnb widgets (IDs 1514761523106706994 and 1522655574018031893) on Stays page with real photos and details
+- [x] Redesign Stays page: side-by-side Airbnb embeds in a modern centered two-column layout
+- [x] Add darker hover shade on navbar links
+- [x] Fix jittery scroll (smooth scrolling, prevent large jumps)

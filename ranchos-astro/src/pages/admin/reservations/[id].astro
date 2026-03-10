@@ -1,0 +1,172 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { checkAdminAuth } from '../../../lib/auth';
+import { getReservationById } from '../../../lib/queries';
+
+if (!checkAdminAuth(Astro.request)) {
+  return Astro.redirect('/admin');
+}
+
+const { id } = Astro.params;
+let reservation: any = null;
+try {
+  reservation = getReservationById(Number(id));
+} catch (e) {}
+
+if (!reservation) return Astro.redirect('/admin/reservations');
+
+const days = Math.ceil(
+  (new Date(reservation.end_date).getTime() - new Date(reservation.start_date).getTime()) / (1000 * 60 * 60 * 24)
+);
+
+const statusColors: Record<string, string> = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  confirmed: 'bg-blue-100 text-blue-800',
+  active: 'bg-green-100 text-green-800',
+  completed: 'bg-gray-100 text-gray-700',
+  cancelled: 'bg-red-100 text-red-700',
+};
+---
+
+<AdminLayout title={`Reservation #${reservation.id} – Admin`}>
+  <div class="max-w-3xl space-y-6">
+    <div>
+      <a href="/admin/reservations" class="text-gray-beach hover:text-ocean text-sm flex items-center gap-1 mb-4">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back to Reservations
+      </a>
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h1 class="font-display text-2xl font-bold text-ocean-dark">Reservation #{reservation.id}</h1>
+          <p class="text-gray-beach text-sm mt-1">Created {new Date(reservation.created_at).toLocaleString()}</p>
+        </div>
+        <span class={`inline-flex px-3 py-1.5 rounded-full text-sm font-semibold capitalize ${statusColors[reservation.status] || 'bg-gray-100 text-gray-700'}`}>
+          {reservation.status}
+        </span>
+      </div>
+    </div>
+
+    <!-- Customer Info -->
+    <div class="bg-white rounded-2xl shadow-sm border border-sand p-6">
+      <h2 class="font-display font-bold text-ocean-dark mb-4">Customer Information</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div><p class="text-xs text-gray-beach">Name</p><p class="font-semibold text-ocean-dark">{reservation.customer_name}</p></div>
+        <div><p class="text-xs text-gray-beach">Email</p><a href={`mailto:${reservation.customer_email}`} class="font-semibold text-ocean hover:underline">{reservation.customer_email}</a></div>
+        <div><p class="text-xs text-gray-beach">Phone</p><p class="font-semibold text-ocean-dark">{reservation.customer_phone || '—'}</p></div>
+        <div><p class="text-xs text-gray-beach">Payment Status</p>
+          <p class={`font-semibold capitalize ${reservation.payment_status === 'paid' ? 'text-green-600' : reservation.payment_status === 'deposit_paid' ? 'text-yellow-600' : 'text-red-600'}`}>
+            {reservation.payment_status.replace('_', ' ')}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Details -->
+    <div class="bg-white rounded-2xl shadow-sm border border-sand p-6">
+      <h2 class="font-display font-bold text-ocean-dark mb-4">Booking Details</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div><p class="text-xs text-gray-beach">Vehicle</p><p class="font-semibold text-ocean-dark">{reservation.car_year} {reservation.car_make} {reservation.car_model}</p></div>
+        <div><p class="text-xs text-gray-beach">Duration</p><p class="font-semibold text-ocean-dark">{days} day{days !== 1 ? 's' : ''}</p></div>
+        <div><p class="text-xs text-gray-beach">Pickup Date</p><p class="font-semibold text-ocean-dark">{new Date(reservation.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p></div>
+        <div><p class="text-xs text-gray-beach">Return Date</p><p class="font-semibold text-ocean-dark">{new Date(reservation.end_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p></div>
+        <div><p class="text-xs text-gray-beach">Total Amount</p><p class="font-bold text-coral text-xl">${Number(reservation.total_amount).toFixed(2)}</p></div>
+        {reservation.deposit_amount && <div><p class="text-xs text-gray-beach">Deposit</p><p class="font-semibold text-ocean-dark">${Number(reservation.deposit_amount).toFixed(2)}</p></div>}
+        {reservation.stripe_session_id && <div class="sm:col-span-2"><p class="text-xs text-gray-beach">Stripe Session</p><p class="font-mono text-xs text-gray-beach break-all">{reservation.stripe_session_id}</p></div>}
+      </div>
+      {reservation.notes && (
+        <div class="mt-4 pt-4 border-t border-sand">
+          <p class="text-xs text-gray-beach mb-1">Notes</p>
+          <p class="text-ocean-dark">{reservation.notes}</p>
+        </div>
+      )}
+    </div>
+
+    <!-- Status Management -->
+    <div class="bg-white rounded-2xl shadow-sm border border-sand p-6">
+      <h2 class="font-display font-bold text-ocean-dark mb-4">Update Status</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="status-buttons">
+        {['pending', 'confirmed', 'active', 'completed', 'cancelled'].map(status => (
+          <button
+            class={`status-btn px-4 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all capitalize ${reservation.status === status ? 'bg-ocean text-white border-ocean' : 'bg-white text-gray-beach border-sand-dark hover:border-ocean hover:text-ocean'}`}
+            data-status={status}
+          >
+            {status}
+          </button>
+        ))}
+      </div>
+
+      <div class="mt-5 pt-5 border-t border-sand">
+        <h3 class="font-semibold text-ocean-dark mb-3 text-sm">Update Payment Status</h3>
+        <div class="flex gap-3" id="payment-buttons">
+          {['unpaid', 'deposit_paid', 'paid'].map(ps => (
+            <button
+              class={`payment-btn px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${reservation.payment_status === ps ? 'bg-turquoise text-white border-turquoise' : 'bg-white text-gray-beach border-sand-dark hover:border-turquoise hover:text-turquoise'}`}
+              data-payment={ps}
+            >
+              {ps.replace('_', ' ')}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div id="update-feedback" class="hidden mt-4 p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex gap-3">
+      <a href={`/cars/${reservation.car_id}`} target="_blank" class="btn-secondary flex-1 justify-center py-3">View Car ↗</a>
+      <a href={`mailto:${reservation.customer_email}?subject=Your Reservation #${reservation.id} – Ranchos del Sol`} class="btn-primary flex-1 justify-center py-3">Email Customer</a>
+    </div>
+  </div>
+</AdminLayout>
+
+<script define:vars={{ reservationId: reservation.id }}>
+  const statusBtns = document.querySelectorAll('.status-btn');
+  const paymentBtns = document.querySelectorAll('.payment-btn');
+  const feedback = document.getElementById('update-feedback');
+
+  async function updateReservation(data) {
+    try {
+      const res = await fetch(`/api/reservations/${reservationId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error('Update failed');
+
+      feedback.textContent = '✓ Updated successfully';
+      feedback.classList.remove('hidden');
+      setTimeout(() => feedback.classList.add('hidden'), 3000);
+    } catch (err) {
+      feedback.textContent = '✗ Update failed';
+      feedback.className = 'mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm text-center';
+      feedback.classList.remove('hidden');
+    }
+  }
+
+  statusBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const status = btn.getAttribute('data-status');
+      statusBtns.forEach(b => {
+        b.classList.remove('bg-ocean', 'text-white', 'border-ocean');
+        b.classList.add('bg-white', 'text-gray-beach', 'border-sand-dark');
+      });
+      btn.classList.add('bg-ocean', 'text-white', 'border-ocean');
+      btn.classList.remove('bg-white', 'text-gray-beach', 'border-sand-dark');
+      updateReservation({ status });
+    });
+  });
+
+  paymentBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const payment_status = btn.getAttribute('data-payment');
+      paymentBtns.forEach(b => {
+        b.classList.remove('bg-turquoise', 'text-white', 'border-turquoise');
+        b.classList.add('bg-white', 'text-gray-beach', 'border-sand-dark');
+      });
+      btn.classList.add('bg-turquoise', 'text-white', 'border-turquoise');
+      btn.classList.remove('bg-white', 'text-gray-beach', 'border-sand-dark');
+      updateReservation({ payment_status });
+    });
+  });
+</script>
