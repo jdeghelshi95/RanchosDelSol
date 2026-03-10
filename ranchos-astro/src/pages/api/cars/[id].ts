@@ -21,7 +21,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
     const body = await request.json();
     const { make, model, year, category, daily_rate, description, features, seats, transmission, fuel_type, available } = body;
 
-    const updated = updateCar(Number(params.id), {
+    const updated = await updateCar(Number(params.id), {
       ...(make && { make }),
       ...(model && { model }),
       ...(year && { year: Number(year) }),
@@ -47,7 +47,7 @@ export const DELETE: APIRoute = async ({ request, params }) => {
   }
 
   try {
-    deleteCar(Number(params.id));
+    await deleteCar(Number(params.id));
     return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });

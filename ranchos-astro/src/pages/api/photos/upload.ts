@@ -53,7 +53,7 @@ export const POST: APIRoute = async ({ request }) => {
     fs.writeFileSync(path.join(UPLOAD_DIR, String(carId), path.basename(fileKey)), buffer);
 
     const url = `${BASE_URL}/uploads/${carId}/${path.basename(fileKey)}`;
-    const photo = addCarPhoto(carId, url, fileKey, isPrimary);
+    const photo = await addCarPhoto(carId, url, fileKey, isPrimary);
 
     return new Response(JSON.stringify(photo), {
       status: 201,

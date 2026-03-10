@@ -10,7 +10,7 @@ if (!checkAdminAuth(Astro.request)) {
 const { id } = Astro.params;
 let reservation: any = null;
 try {
-  reservation = getReservationById(Number(id));
+  reservation = await getReservationById(Number(id));
 } catch (e) {}
 
 if (!reservation) return Astro.redirect('/admin/reservations');

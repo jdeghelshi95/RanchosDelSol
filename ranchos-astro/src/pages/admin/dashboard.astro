@@ -9,7 +9,7 @@ if (!checkAdminAuth(Astro.request)) {
 
 let stats: any = { totalCars: 0, availableCars: 0, totalReservations: 0, activeReservations: 0, revenue: 0, recentReservations: [] };
 try {
-  stats = getAdminStats();
+  stats = await getAdminStats();
 } catch (e) {}
 
 const statusColors: Record<string, string> = {

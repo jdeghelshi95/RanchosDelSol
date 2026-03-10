@@ -11,7 +11,7 @@ if (!checkAdminAuth(Astro.request)) {
 const { id } = Astro.params;
 let car: any = null;
 try {
-  car = getCarWithPhotos(Number(id));
+  car = await getCarWithPhotos(Number(id));
 } catch (e) {}
 
 if (!car) return Astro.redirect('/admin/cars');

@@ -4,7 +4,7 @@ import { checkAdminAuth } from '../../../lib/auth';
 
 export const GET: APIRoute = async () => {
   try {
-    const cars = getCars();
+    const cars = await getCars();
     return new Response(JSON.stringify(cars), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -27,7 +27,7 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
     }
 
-    const car = createCar({
+    const car = await createCar({
       make,
       model,
       year: Number(year),

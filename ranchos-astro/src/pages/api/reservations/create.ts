@@ -36,7 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Check car exists and is available
-    const car = getCarById(Number(carId));
+    const car = await getCarById(Number(carId));
     if (!car) {
       return new Response(JSON.stringify({ error: 'Vehicle not found' }), { status: 404 });
     }
@@ -45,7 +45,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Check for date conflicts
-    const isAvailable = checkCarAvailability(Number(carId), startDate, endDate);
+    const isAvailable = await checkCarAvailability(Number(carId), startDate, endDate);
     if (!isAvailable) {
       return new Response(JSON.stringify({ error: 'Vehicle is already reserved for the selected dates' }), { status: 409 });
     }
@@ -101,7 +101,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Create the reservation
-    const reservation = createReservation({
+    const reservation = await createReservation({
       car_id: Number(carId),
       customer_name: customerName,
       customer_email: customerEmail,

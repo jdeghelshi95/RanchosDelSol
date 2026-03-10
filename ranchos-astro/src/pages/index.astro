@@ -4,7 +4,7 @@ import { getCarsWithPrimaryPhoto } from '../lib/queries';
 
 let featuredCars: any[] = [];
 try {
-  featuredCars = getCarsWithPrimaryPhoto(true).slice(0, 3);
+  featuredCars = await getCarsWithPrimaryPhoto(true).slice(0, 3);
 } catch (e) {
   // DB not yet seeded
 }

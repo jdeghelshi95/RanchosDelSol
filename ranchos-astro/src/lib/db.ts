@@ -1,22 +1,18 @@
-import Database from 'better-sqlite3';
-import path from 'path';
+import { createClient } from '@libsql/client';
 
-const DB_PATH = process.env.DB_PATH || path.join(process.cwd(), 'data', 'ranchos.db');
+// Turso / libSQL client — works on Vercel serverless and locally
+// Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in your environment.
+// For local dev without Turso, use a local file: file:./data/ranchos.db
+const url = process.env.TURSO_DATABASE_URL || 'file:./data/ranchos.db';
+const authToken = process.env.TURSO_AUTH_TOKEN;
 
-// Ensure data directory exists
-import fs from 'fs';
-const dir = path.dirname(DB_PATH);
-if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-const sqlite = new Database(DB_PATH);
-sqlite.pragma('journal_mode = WAL');
-sqlite.pragma('foreign_keys = ON');
-
-export const db = sqlite;
+export const db = createClient(
+  authToken ? { url, authToken } : { url }
+);
 
 // Run migrations on startup
-export function initDb() {
-  sqlite.exec(`
+export async function initDb() {
+  await db.executeMultiple(`
     CREATE TABLE IF NOT EXISTS cars (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       make TEXT NOT NULL,
@@ -64,4 +60,5 @@ export function initDb() {
   `);
 }
 
-initDb();
+// Initialize on import (fire-and-forget, errors logged but not fatal)
+initDb().catch(err => console.error('[DB] Init error:', err));

@@ -9,15 +9,14 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.5.4",
     "@astrojs/react": "^4.4.2",
+    "@astrojs/vercel": "^9.0.4",
     "@libsql/client": "^0.17.0",
     "@sendgrid/mail": "^8.1.6",
     "@tailwindcss/vite": "^4.2.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "astro": "^5.17.1",
-    "better-sqlite3": "^12.6.2",
     "clsx": "^2.1.1",
     "drizzle-kit": "^0.31.9",
     "drizzle-orm": "^0.45.1",
@@ -27,8 +26,5 @@
     "stripe": "^20.4.1",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1"
-  },
-  "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13"
   }
 }

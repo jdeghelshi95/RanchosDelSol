@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   try {
     const { carId, photoId } = await request.json();
-    setPrimaryPhoto(Number(carId), Number(photoId));
+    await setPrimaryPhoto(Number(carId), Number(photoId));
     return new Response(JSON.stringify({ success: true }), {
       headers: { 'Content-Type': 'application/json' },
     });

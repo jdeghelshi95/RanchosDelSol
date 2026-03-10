@@ -9,7 +9,7 @@ if (!checkAdminAuth(Astro.request)) {
 
 let reservations: any[] = [];
 try {
-  reservations = getReservations();
+  reservations = await getReservations();
 } catch (e) {}
 
 const statusColors: Record<string, string> = {

@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ request }) => {
   }
 
   try {
-    const reservations = getReservations();
+    const reservations = await getReservations();
     return new Response(JSON.stringify(reservations), {
       headers: { 'Content-Type': 'application/json' },
     });

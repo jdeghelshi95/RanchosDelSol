@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ request, params }) => {
   }
 
   try {
-    const reservation = getReservationById(Number(params.id));
+    const reservation = await getReservationById(Number(params.id));
     if (!reservation) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
     return new Response(JSON.stringify(reservation), { headers: { 'Content-Type': 'application/json' } });
   } catch (err: any) {
@@ -23,7 +23,7 @@ export const PUT: APIRoute = async ({ request, params }) => {
 
   try {
     const body = await request.json();
-    const updated = updateReservation(Number(params.id), body);
+    const updated = await updateReservation(Number(params.id), body);
     return new Response(JSON.stringify(updated), { headers: { 'Content-Type': 'application/json' } });
   } catch (err: any) {
     return new Response(JSON.stringify({ error: err.message }), { status: 500 });

@@ -3,3 +3,7 @@
 - [x] Redesign Stays page: side-by-side Airbnb embeds in a modern centered two-column layout
 - [x] Add darker hover shade on navbar links
 - [x] Fix jittery scroll (smooth scrolling, prevent large jumps)
+- [ ] Fix Vercel deployment: swap @astrojs/node for @astrojs/vercel adapter
+- [ ] Replace better-sqlite3 (not supported on Vercel) with Vercel Postgres or Turso (libsql)
+- [ ] Add vercel.json config for proper routing
+- [ ] Test build locally with Vercel adapter

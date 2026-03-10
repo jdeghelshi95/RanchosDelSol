@@ -9,7 +9,7 @@ if (!checkAdminAuth(Astro.request)) {
 
 let cars: any[] = [];
 try {
-  cars = getCarsWithPrimaryPhoto();
+  cars = await getCarsWithPrimaryPhoto();
 } catch (e) {}
 ---
 
