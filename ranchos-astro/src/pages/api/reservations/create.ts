@@ -118,7 +118,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     // Get full reservation with car info for emails
-    const fullReservation = getReservationById(reservation.id);
+    const fullReservation = await getReservationById(reservation.id);
     if (fullReservation) {
       // Send emails asynchronously (don't block response)
       Promise.all([

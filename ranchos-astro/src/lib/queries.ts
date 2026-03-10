@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db, ensureDb } from './db';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -66,6 +66,7 @@ function row<T>(r: Record<string, unknown>): T {
 // ─── Cars ────────────────────────────────────────────────────────────────────
 
 export async function getCars(availableOnly = false): Promise<Car[]> {
+  await ensureDb();
   const sql = availableOnly
     ? 'SELECT * FROM cars WHERE available = 1 ORDER BY make, model'
     : 'SELECT * FROM cars ORDER BY make, model';
@@ -91,6 +92,7 @@ export async function getCarWithPhotos(id: number): Promise<CarWithPhotos | unde
 }
 
 export async function getCarsWithPrimaryPhoto(availableOnly = false): Promise<CarWithPhotos[]> {
+  await ensureDb();
   const cars = await getCars(availableOnly);
   return Promise.all(
     cars.map(async car => {
@@ -106,6 +108,7 @@ export async function getCarsWithPrimaryPhoto(availableOnly = false): Promise<Ca
 }
 
 export async function createCar(data: Omit<Car, 'id' | 'created_at' | 'updated_at'>): Promise<Car> {
+  await ensureDb();
   const result = await db.execute({
     sql: `INSERT INTO cars (make, model, year, category, daily_rate, description, features, seats, transmission, fuel_type, available)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -160,6 +163,7 @@ export async function setPrimaryPhoto(carId: number, photoId: number): Promise<v
 // ─── Reservations ─────────────────────────────────────────────────────────────
 
 export async function getReservations(): Promise<ReservationWithCar[]> {
+  await ensureDb();
   const result = await db.execute(`
     SELECT r.*, c.make as car_make, c.model as car_model, c.year as car_year
     FROM reservations r
@@ -225,6 +229,7 @@ export async function checkCarAvailability(carId: number, startDate: string, end
 // ─── Stats ────────────────────────────────────────────────────────────────────
 
 export async function getAdminStats() {
+  await ensureDb();
   const [totalCarsRes, availableCarsRes, totalResRes, activeResRes, revenueRes, recentRes] = await Promise.all([
     db.execute('SELECT COUNT(*) as c FROM cars'),
     db.execute('SELECT COUNT(*) as c FROM cars WHERE available = 1'),

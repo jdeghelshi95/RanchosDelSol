@@ -4,7 +4,7 @@ import { checkAdminAuth } from '../../../lib/auth';
 
 export const GET: APIRoute = async ({ params }) => {
   try {
-    const car = getCarWithPhotos(Number(params.id));
+    const car = await getCarWithPhotos(Number(params.id));
     if (!car) return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
     return new Response(JSON.stringify(car), { headers: { 'Content-Type': 'application/json' } });
   } catch (err: any) {

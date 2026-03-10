@@ -3,7 +3,10 @@
 - [x] Redesign Stays page: side-by-side Airbnb embeds in a modern centered two-column layout
 - [x] Add darker hover shade on navbar links
 - [x] Fix jittery scroll (smooth scrolling, prevent large jumps)
-- [ ] Fix Vercel deployment: swap @astrojs/node for @astrojs/vercel adapter
-- [ ] Replace better-sqlite3 (not supported on Vercel) with Vercel Postgres or Turso (libsql)
-- [ ] Add vercel.json config for proper routing
-- [ ] Test build locally with Vercel adapter
+- [x] Fix Vercel deployment: swap @astrojs/node for @astrojs/vercel adapter
+- [x] Replace better-sqlite3 (not supported on Vercel) with Turso (libsql)
+- [x] Add vercel.json config for proper routing
+- [x] Test build locally with Vercel adapter — build completed successfully
+- [ ] Diagnose and fix live Vercel 404 — check deployment logs and root cause
+- [ ] Fix index.astro: .slice() called on Promise instead of resolved array (line 7)
+- [ ] Make DB init non-fatal: graceful fallback when TURSO env vars not set

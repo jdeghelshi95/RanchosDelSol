@@ -1,18 +1,37 @@
-import { createClient } from '@libsql/client';
+import { createClient, type Client } from '@libsql/client';
 
-// Turso / libSQL client — works on Vercel serverless and locally
+// Turso / libSQL client — works on Vercel serverless and locally.
 // Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in your environment.
-// For local dev without Turso, use a local file: file:./data/ranchos.db
-const url = process.env.TURSO_DATABASE_URL || 'file:./data/ranchos.db';
-const authToken = process.env.TURSO_AUTH_TOKEN;
+// For local dev without Turso, uses a local SQLite file automatically.
 
-export const db = createClient(
-  authToken ? { url, authToken } : { url }
-);
+function createDb(): Client {
+  const url = process.env.TURSO_DATABASE_URL || 'file:./data/ranchos.db';
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+  return createClient(authToken ? { url, authToken } : { url });
+}
 
-// Run migrations on startup
-export async function initDb() {
-  await db.executeMultiple(`
+let _db: Client | null = null;
+
+function getDb(): Client {
+  if (!_db) {
+    _db = createDb();
+  }
+  return _db;
+}
+
+// Proxy that lazily initialises the client on first use
+export const db = new Proxy({} as Client, {
+  get(_target, prop) {
+    const client = getDb();
+    const val = (client as any)[prop];
+    return typeof val === 'function' ? val.bind(client) : val;
+  },
+});
+
+// Run migrations — creates tables if they don't exist
+export async function initDb(): Promise<void> {
+  const client = getDb();
+  await client.executeMultiple(`
     CREATE TABLE IF NOT EXISTS cars (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       make TEXT NOT NULL,
@@ -60,5 +79,15 @@ export async function initDb() {
   `);
 }
 
-// Initialize on import (fire-and-forget, errors logged but not fatal)
-initDb().catch(err => console.error('[DB] Init error:', err));
+// Initialize lazily — called by pages/API routes that need the DB
+// This avoids crashing the entire app on startup if env vars are missing
+let _initialized = false;
+export async function ensureDb(): Promise<void> {
+  if (_initialized) return;
+  try {
+    await initDb();
+    _initialized = true;
+  } catch (err) {
+    console.error('[DB] Init error (non-fatal):', err);
+  }
+}
